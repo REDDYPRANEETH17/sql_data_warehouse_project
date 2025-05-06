@@ -9,7 +9,7 @@ Script Purpose:
               we don't insert duplicate data.
             ->The 'COPY' command is not used as the data is not Bulk. To use the 'COPY' command, initially do the hashing using pandas
               and use the command.
-
+================================================================================================================================================
 */
 
 
