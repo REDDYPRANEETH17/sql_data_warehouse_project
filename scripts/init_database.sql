@@ -3,7 +3,7 @@
 Create Database and Schemas
 =============================================================
 Script Purpose:
-    This script creates a new database named 'DataWarehouse' after checking if it already exists. 
+    After checking if it already exists, this script creates a new database named 'DataWarehouse'. 
     If the database exists, it is dropped and recreated. Additionally, the script sets up three schemas 
     within the database: 'bronze', 'silver', and 'gold'.
 	
@@ -13,30 +13,31 @@ WARNING:
     and ensure you have proper backups before running this script.
 */
 
-USE master;
-GO
-
--- Drop and recreate the 'DataWarehouse' database
-IF EXISTS (SELECT 1 FROM sys.databases WHERE name = 'DataWarehouse')
+DO
+$$
 BEGIN
-    ALTER DATABASE DataWarehouse SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-    DROP DATABASE DataWarehouse;
+    IF EXISTS (
+        SELECT FROM pg_database WHERE datname = 'datawarehouse'
+    ) THEN
+        -- Disconnect all active connections to the database
+        PERFORM pg_terminate_backend(pid)
+        FROM pg_stat_activity
+        WHERE datname = 'datawarehouse'
+        AND pid <> pg_backend_pid();
+
+        -- Drop the database
+        EXECUTE 'DROP DATABASE datawarehouse';
+    END IF;
 END;
-GO
+$$;
+
 
 -- Create the 'DataWarehouse' database
 CREATE DATABASE DataWarehouse;
-GO
-
-USE DataWarehouse;
-GO
 
 -- Create Schemas
 CREATE SCHEMA bronze;
-GO
 
 CREATE SCHEMA silver;
-GO
 
 CREATE SCHEMA gold;
-GO
