@@ -5,39 +5,10 @@ DDL SCRIPT: Creating Bronze Tables
 Script Purpose:
               The script creates tables in the "Bronze" Schema, by dropping tables if they
               already exists.
-              Run this script to re-define the DDL structure of "Bronze" tables
+              Run this script to redefine the DDL structure of "Bronze" tables
 ========================================================================================================
 */
 
--- Drop and recreate the 'DataWarehouse' database
-DO
-$$
-BEGIN
-    IF EXISTS (
-        SELECT FROM pg_database WHERE datname = 'datawarehouse'
-    ) THEN
-        -- Disconnect all active connections to the database
-        PERFORM pg_terminate_backend(pid)
-        FROM pg_stat_activity
-        WHERE datname = 'datawarehouse'
-        AND pid <> pg_backend_pid();
-
-        -- Drop the database
-        EXECUTE 'DROP DATABASE datawarehouse';
-    END IF;
-END;
-$$;
-
-
--- Create the 'DataWarehouse' database
-CREATE DATABASE DataWarehouse;
-
--- Create Schemas
-CREATE SCHEMA bronze;
-
-CREATE SCHEMA silver;
-
-CREATE SCHEMA gold;
 
 DROP TABLE IF EXISTS bronze.crm_cust_info;
 CREATE TABLE bronze.crm_cust_info (
