@@ -1,3 +1,19 @@
+/*
+================================================================================================================================================
+Python script: Imports data using Python (library: psycopg2)
+================================================================================================================================================
+Script Purpose:
+            ->Connect to the dedicated database.
+            ->The below script helps to import the data from CSV files into the tables in the database
+            ->To handle redundancy in the datasets, we initially create a hash with the help of the row data inside the datasets, where 
+              we don't insert duplicate data.
+            ->The 'COPY' command is not used as the data is not Bulk. To use the 'COPY' command, initially do the hashing using pandas
+              and use the command.
+
+*/
+
+
+
 #importing necessary libraries
 import psycopg2
 from datetime import datetime
@@ -20,6 +36,7 @@ conn = psycopg2.connect(
 
 #Creating a cursor
 cur = conn.cursor()
+# Table names and the dataset location
 tables = [
     {"table":"bronze.crm_cust_info","csv":r"C:\Users\krpra\OneDrive\Desktop\postgreSQL\Data Warehousing\sql-data-warehouse-project\datasets\source_crm\cust_info.csv"},
     {"table":"bronze.crm_prd_info","csv":r"C:\Users\krpra\OneDrive\Desktop\postgreSQL\Data Warehousing\sql-data-warehouse-project\datasets\source_crm\prd_info.csv"},
@@ -28,8 +45,10 @@ tables = [
     {"table":"bronze.erp_loc_a101","csv":r"C:\Users\krpra\OneDrive\Desktop\postgreSQL\Data Warehousing\sql-data-warehouse-project\datasets\source_erp\LOC_A101.csv"},
     {"table":"bronze.erp_px_cat_g1v2","csv":r"C:\Users\krpra\OneDrive\Desktop\postgreSQL\Data Warehousing\sql-data-warehouse-project\datasets\source_erp\PX_CAT_G1V2.csv"}
 ]
+#Looping through each table
 for table in tables:
     print(f"Importing {table['csv']} into {table['table']}")
+    #Using the CSV file
     with open(table["csv"],newline='',encoding='UTF-8') as f:
         reader = csv.DictReader(f)
         columns= reader.fieldnames
